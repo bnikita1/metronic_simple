@@ -1,7 +1,7 @@
 import React from 'react'
-import { USER_LOGIN, USER_REGISTERATION,GET_CATEGORY, ADD_CATEGORY,UPDATE_CATEGORY,DELETE_CATEGORY } from '../actionTypes';
+import { USER_LOGIN, USER_REGISTERATION,GET_CATEGORY, ADD_CATEGORY,UPDATE_CATEGORY,DELETE_CATEGORY,USER_LOGOUT } from '../actionTypes';
 import axios from 'axios';
-
+import { toast } from 'react-toastify';
 export const registerUser = (payload) => (dispatch) => dispatch(registerUserInit(payload));
 
 export const registerUserInit = (payload)  => async (dispatch) => {
@@ -45,13 +45,19 @@ export const loginUserInit = (payload)  => async (dispatch) => {
     });
     console.log("PAYLOAD LOGIN", payload);
     //  axios.post('http://localhost:9000/api/users', { email: payload.email, fullname: payload.fullname, username: payload.username, password: payload.password }).then((res,err) => {
-    return axios.post('http://localhost:9000/api/users/login' , { email:payload.email, password:payload.password }).then((res,err)=>{
-        if (err)
-        {
+    return axios.post('http://localhost:9000/api/users/login', { email: payload.email, password: payload.password }).then((res, err) => {
+        if (err) {
             dispatch(loginUserError(err));
         }
         console.log("USER LOGIN", { res, err });
-        dispatch(loginUserSuccess(res));
+        if (res.data.user !== null) {
+            dispatch(loginUserSuccess(res));
+            
+        }
+        else {
+            toast.error('Invalid username or password');
+            dispatch(loginUserError(res));
+        }
     });
 }
 
@@ -214,6 +220,34 @@ export const deleteCategoriesSuccess = (payload) => (dispatch) => {
 export const deleteCategoriesError = (err) => (dispatch) => {
     dispatch({
         type: DELETE_CATEGORY.DELETE_CATEGORY_ERROR,
+        payload: { err: err }
+    });
+
+}
+
+
+
+export const logoutUser = () => (dispatch) => dispatch(logoutUserInit());
+
+export const logoutUserInit = ()  => async (dispatch) => {
+    dispatch({
+        type: USER_LOGOUT.USER_LOGOUT_INIT
+    });
+    dispatch(logoutUserSuccess());
+}
+
+
+export const logoutUserSuccess = () => (dispatch) => {
+    console.log("RESPONSE in DISPATCHS LOGOU ");
+    dispatch({
+        type: USER_LOGOUT.USER_LOGOUT_SUCCESS,
+        payload: { }
+    });
+}
+
+export const logoutUserError = (err) => (dispatch) => {
+    dispatch({
+        type: USER_LOGOUT.USER_LOGOUT_ERROR,
         payload: { err: err }
     });
 

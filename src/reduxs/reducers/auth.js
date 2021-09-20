@@ -1,4 +1,4 @@
-import { USER_REGISTERATION, USER_LOGIN,GET_CATEGORY, ADD_CATEGORY, UPDATE_CATEGORY,DELETE_CATEGORY } from "../actionTypes";
+import { USER_REGISTERATION, USER_LOGIN,GET_CATEGORY, ADD_CATEGORY, UPDATE_CATEGORY,DELETE_CATEGORY,USER_LOGOUT } from "../actionTypes";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -25,7 +25,7 @@ const reducer = persistReducer(
             case USER_LOGIN.USER_LOGIN_SUCCESS:
                 return { ...state, authToken: payload.user.authToken, user: payload.user, loading: false };
 
-            case USER_LOGIN.USER_REGISTERATION_ERROR:
+            case USER_LOGIN.USER_LOGIN_ERROR:
                 return { ...state, error: payload, loading: false };
             
             case GET_CATEGORY.GET_CATEGORY_INIT:
@@ -61,6 +61,15 @@ const reducer = persistReducer(
                 const catss = categoryss.filter((item) => item.id !== payload.categories.id);
                 return { ...state, categorylst: catss, loading: false };
 
+            
+                case USER_LOGOUT.USER_LOGOUT_INIT:
+                    return { ...state, loading: true };
+    
+            case USER_LOGOUT.USER_LOGOUT_SUCCESS:
+                return { ...state, authToken: null, user: undefined, loading: false };
+    
+                case USER_LOGOUT.USER_LOGOUT_ERROR:
+                    return { ...state, error: payload, loading: false };
             default:
                 return state;
             

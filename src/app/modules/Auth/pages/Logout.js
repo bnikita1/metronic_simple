@@ -1,21 +1,43 @@
-import React, {Component} from "react";
+import React, {Component, useEffect} from "react";
 import {connect} from "react-redux";
 import {Redirect} from "react-router-dom";
 import {LayoutSplashScreen} from "../../../../_metronic/layout";
 import * as auth from "../_redux/authRedux";
+import { useDispatch } from 'react-redux';
+import { logoutUser } from "../../../../reduxs/actions";
 
-class Logout extends Component {
-  componentDidMount() {
-    this.props.logout();
-  }
 
-  render() {
-    const { hasAuthToken } = this.props;
-    return hasAuthToken ? <LayoutSplashScreen /> : <Redirect to="/auth/login" />;
-  }
+const Logout = (props) => {
+  
+    const { hasAuthToken } = props;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(logoutUser());
+    console.log("hasAuthToken", hasAuthToken);
+    console.log("hasAuthToken props", props);
+  }, []);
+
+  return hasAuthToken ? <LayoutSplashScreen /> : <Redirect to="/auth/login" />;
+  
+
 }
 
-export default connect(
-  ({ auth }) => ({ hasAuthToken: Boolean(auth.authToken) }),
-  auth.actions
-)(Logout);
+export default Logout;
+
+
+// class Logout extends Component {
+//   componentDidMount() {
+//     this.props.logout();
+//   }
+
+//   render() {
+//     const { hasAuthToken } = this.props;
+//     return hasAuthToken ? <LayoutSplashScreen /> : <Redirect to="/auth/login" />;
+//   }
+// }
+
+// export default connect(
+//   ({ auth }) => ({ hasAuthToken: Boolean(auth.authToken) }),
+//   auth.actions
+// )(Logout);

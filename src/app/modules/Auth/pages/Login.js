@@ -7,7 +7,9 @@ import { FormattedMessage, injectIntl } from "react-intl";
 import * as auth from "../_redux/authRedux";
 // import { login } from "../_redux/authCrud";
 import { loginUser } from '../../../../reduxs/actions';
-
+import { ToastContainer, toast } from 'react-toastify';
+// import './toast.css';
+import 'react-toastify/dist/ReactToastify.css';
 /*
   INTL (i18n) docs:
   https://github.com/formatjs/react-intl/blob/master/docs/Components.md#formattedmessage
@@ -75,7 +77,11 @@ function Login(props) {
             disableLoading();
             setSubmitting(false);
 
+      
       dispacth(loginUser({ email: values.email, password: values.password }));
+
+
+      
       // setTimeout(() => {
       //   login(values.email, values.password)
       //     .then(({ data: { authToken } }) => {
@@ -103,6 +109,8 @@ function Login(props) {
   return (
     <div className="login-form login-signin" id="kt_login_signin_form">
       {/* begin::Head */}
+      <ToastContainer />
+
       <div className="text-center mb-10 mb-lg-20">
         <h3 className="font-size-h1">
           <FormattedMessage id="AUTH.LOGIN.TITLE" />
