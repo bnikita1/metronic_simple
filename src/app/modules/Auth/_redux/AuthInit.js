@@ -2,7 +2,8 @@ import React, { useRef, useEffect, useState } from "react";
 import { shallowEqual, useSelector, connect, useDispatch } from "react-redux";
 import { LayoutSplashScreen } from "../../../../_metronic/layout";
 import * as auth from "./authRedux";
-import { getUserByToken } from "./authCrud";
+// import { getUserByToken } from "./authCrud";
+import { getUserByToken,logoutUser } from "../../../../reduxs/actions";
 
 function AuthInit(props) {
   const didRequest = useRef(false);
@@ -20,13 +21,13 @@ function AuthInit(props) {
     const requestUser = async () => {
       try {
         if (!didRequest.current) {
-          const { data: user } = await getUserByToken();
-          dispatch(props.fulfillUser(user));
+          // const { data: user } = await getUserByToken();
+          dispatch(getUserByToken());
         }
       } catch (error) {
         console.error(error);
         if (!didRequest.current) {
-          dispatch(props.logout());
+          dispatch(logoutUser());
         }
       } finally {
         setShowSplashScreen(false);
@@ -38,7 +39,10 @@ function AuthInit(props) {
     if (authToken) {
       requestUser();
     } else {
-      dispatch(props.fulfillUser(undefined));
+      dispatch(logoutUser());
+
+      // dispatch(props.logout());
+      // dispatch(props.fulfillUser(undefined));
       setShowSplashScreen(false);
     }
     // eslint-disable-next-line

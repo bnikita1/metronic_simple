@@ -25,9 +25,9 @@ export default function App({ store, persistor, basename }) {
               {/* Provide `react-intl` context synchronized with Redux state.  */}
               <I18nProvider>
                 {/* Render routes with provided `Layout`. */}
-                {/* <AuthInit> */}
+                <AuthInit>
                   <Routes />
-                {/* </AuthInit> */}
+                </AuthInit>
               </I18nProvider>
             </MaterialThemeProvider>
           </BrowserRouter>

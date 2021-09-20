@@ -42,7 +42,7 @@ export default function BasePage() {
         <ContentRoute path="/my-page" component={MyPage} />
         <Route path="/google-material" component={GoogleMaterialPage} />
         <Route path="/react-bootstrap" component={ReactBootstrapPage} />
-        <Route path="/products" component={Categorypage} />
+        <ContentRoute path="/products" component={Categorypage} />
         <Route path="/crm" component={ECommercePage} />
         <Route path="/user-profile" component={UserProfilepage} />
         <Redirect to="error/error-v1" />

@@ -1,5 +1,5 @@
 import React from 'react'
-import { USER_LOGIN, USER_REGISTERATION,GET_CATEGORY, ADD_CATEGORY,UPDATE_CATEGORY,DELETE_CATEGORY,USER_LOGOUT } from '../actionTypes';
+import { USER_LOGIN, USER_REGISTERATION,GET_CATEGORY, ADD_CATEGORY,UPDATE_CATEGORY,DELETE_CATEGORY,USER_LOGOUT,GET_TOKEN_USER } from '../actionTypes';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 export const registerUser = (payload) => (dispatch) => dispatch(registerUserInit(payload));
@@ -77,6 +77,66 @@ export const loginUserError = (err) => (dispatch) => {
     });
 
 }
+
+
+export const getUserByToken = () => (dispatch) => dispatch(getUserByTokenInit());
+
+export const getUserByTokenInit = ()  => async (dispatch) => {
+    dispatch({
+        type: GET_TOKEN_USER.GET_TOKEN_USER_INIT
+    });
+    console.log("PAYLOAD LOGIN",);
+    //  axios.post('http://localhost:9000/api/users', { email: payload.email, fullname: payload.fullname, username: payload.username, password: payload.password }).then((res,err) => {
+    return axios.get('http://localhost:9000/api/users/auth').then((res, err) => {
+        if (err) {
+            dispatch(getUserByTokenError(err));
+        }
+        console.log("USER LOGIN", { res, err });
+        if (res.data.user !== null) {
+            dispatch(getUserByTokenSuccess(res));
+            
+        }
+        else {
+            toast.error('Invalid username or password');
+            dispatch(getUserByTokenError(res));
+        }
+    });
+}
+
+
+export const getUserByTokenSuccess = (userData) => (dispatch) => {
+    console.log("RESPONSE in DISPATCHS  ", userData.data);
+    dispatch({
+        type: GET_TOKEN_USER.GET_TOKEN_USER_SUCCESS,
+        payload: { user: userData.data }
+    });
+}
+
+export const getUserByTokenError = (err) => (dispatch) => {
+    dispatch({
+        type: GET_TOKEN_USER.GET_TOKEN_USER_ERROR,
+        payload: { err: err }
+    });
+
+}
+
+
+
+
+// export async function getUserByToken() {
+//     console.log("getUserByToken");
+//     // Authorization head should be fulfilled in interceptor.
+//     // const headers = { Authorization: `Bearer auth-token-jldtuq39hug2sn03i0xtub` };
+//     return axios.get('http://localhost:9000/api/users/auth');
+//     // console.log("getUserByToken", apiReturn);
+//     // return apiReturn;
+//     // .then((res) => {
+//     //   console.log("res.dataAuthhhh", res.data);
+//     //   return [200, { ...res.data, password: undefined }];
+//     // }, (error) => {
+//     //   return [400];
+//     // });
+//   }
 
 
 
