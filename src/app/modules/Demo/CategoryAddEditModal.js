@@ -1,69 +1,69 @@
-import React,{useState} from 'react'
+import React, { useState, useEffect } from 'react';
 import { Modal,InputGroup,Form,Col } from "react-bootstrap";
 import { addCategories, updateCategories } from '../../../reduxs/actions';
 import { useDispatch } from "react-redux";
-// import { Formik,  Field } from 'formik';
-// import * as Yup from 'yup';
-// import { useFormik } from 'formik';
 
-const AddEditCategoryModal=({isEdit, show, setModal,onHide, catgory }) => {
+const AddEditCategoryModal = ({ isEdit, show, setModal, onHide, catgory }) => {
     
+    const [formErrors, setFormErrors] = useState({category:'',description:''});
     const [category, setCategory] = useState(catgory);
     const dispatch = useDispatch();
+   
+   
     const onCategory = (e, name) => {
+        onCategoryBlur(e.target.value, name);
+        
         let cat = category;
         cat[name] = e.target.value;       
         setCategory({...cat});
     }
 
-    const onSubmit = () => {
-        if (isEdit)
-        {
-            dispatch(updateCategories(category));
+    const onSubmit = (values) => {
+
+        if ((formErrors.category.trim().length > 0 || formErrors.description.trim().length > 0) || (category.description.length <= 0 || category.category.length <= 0)) {
             
+            if (category.description.length <= 0) {
+                onCategoryBlur('', "description");
+            } if (category.category.length <= 0) {
+                onCategoryBlur('', "category");
+            }
+            console.log("ERROR IN SUBM<T", values);
+            return;
         }
         else {
-            console.log("ADD EDIT object");
-           dispatch(addCategories({ category: category.category, description: category.description }));
+            if (isEdit) {
+                dispatch(updateCategories(category));
+            
+            }
+            else {
+                console.log("ADD EDIT object");
+                dispatch(addCategories({ category: category.category, description: category.description }));
+            }
         }
-        setModal(false);
+            setModal(false);
     }
 
 
-    // const formik = useFormik({
-    //     initialValues: {
-    //       firstName: '',
-    //       lastName: '',
-    //       email: '',
-    //     },
-    //     validate,
-    //     onSubmit: values => {
-    //       alert(JSON.stringify(values, null, 2));
-    //     },
-    // });
-    
-    // const validate = values => {
-    //     const errors = {};
-    //     if (!values.firstName) {
-    //       errors.firstName = 'Required';
-    //     } else if (values.firstName.length > 15) {
-    //       errors.firstName = 'Must be 15 characters or less';
-    //     }
-      
-    //     if (!values.lastName) {
-    //       errors.lastName = 'Required';
-    //     } else if (values.lastName.length > 20) {
-    //       errors.lastName = 'Must be 20 characters or less';
-    //     }
-      
-    //     if (!values.email) {
-    //       errors.email = 'Required';
-    //     } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-    //       errors.email = 'Invalid email address';
-    //     }
-      
-    //     return errors;
-    //   };
+    const onCategoryBlur = (value, name) => {
+
+        let regxs = {"category":3,"description":3}
+
+        let errors = formErrors;
+        errors[name] = "";
+        const regex = /^[A-Za-z]+$/;
+        if (value.trim().length <=0) {
+            errors[name] = "Cannot be blank";
+        } else if (!regex.test(value)) {
+            errors[name]
+                = "Invalid characters";
+        }
+       else if (value.length < regxs[name])
+        {
+            errors[name] = "Minimum "+ regxs[name] + "characters are required"
+        }
+        // console.log("BLURED", errors);
+        setFormErrors({...errors});
+    }
 
     return (
         <Modal
@@ -78,14 +78,17 @@ const AddEditCategoryModal=({isEdit, show, setModal,onHide, catgory }) => {
             </Modal.Header>
             <Modal.Body>
           
-                <Form   >
+                <Form  >
                     <Form.Group className="mb-3" controlId="formPlaintextEmail">
                         <Form.Label column sm="2">
                             Name
     </Form.Label>
                         <Col sm="10">
-                            <Form.Control type="text" name="name" onChange={(e) => { onCategory(e, "category") }} value={category.category || ''} defaultValue="email@example.com" />
+                            <Form.Control type="text" name="name" onBlur={(e) => { onCategoryBlur(e.target.value, "category") }} onChange={(e) => { onCategory(e, "category") }} value={category.category || ''} defaultValue="email@example.com" />
                         </Col>
+                        {formErrors.category && formErrors.category.trim().length > 0 && (
+                            <span className="text-danger">{formErrors.category}</span>
+                        )}
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formPlaintextPassword">
@@ -93,22 +96,14 @@ const AddEditCategoryModal=({isEdit, show, setModal,onHide, catgory }) => {
                             Description
     </Form.Label>
                         <Col sm="10">
-                            <Form.Control as="textarea" name onChange={(e) => { onCategory(e, "description") }} rows={3} value={category.description || ''} placeholder="description" />
+                            <Form.Control as="textarea" name="" onBlur={(e) => { onCategoryBlur(e.target.value, "description") }} onChange={(e) => { onCategory(e, "description") }} rows={3} value={category.description || ''} placeholder="description" />
                         </Col>
+                        {formErrors.description && formErrors.description.trim().length > 0 && (
+                            <span className="text-danger">{formErrors.description}</span>
+                        )}
                     </Form.Group>
-                </Form>
-                
-            </Modal.Body>
-            <Modal.Footer>
-                <div>
-                    <button
-                        type="button"
-                        onClick={onHide}
-                        className="btn btn-light btn-elevate"
-                    >
-                        Cancel
-            </button>
-                    <> </>
+
+
                     <button
                         type="button"
                         onClick={onSubmit}
@@ -116,10 +111,21 @@ const AddEditCategoryModal=({isEdit, show, setModal,onHide, catgory }) => {
                     >
                         {isEdit ? 'Edit' : 'Add'}
                     </button>
-                </div>
+
+                    <button
+                        type="button"
+                        onClick={onHide}
+                        className="btn btn-light btn-elevate"
+                    >
+                        Cancel
+            </button>
+                </Form>
+                
+            </Modal.Body>
+            <Modal.Footer>
             </Modal.Footer>
         </Modal>
-    )
+    );
 }
 
 export default AddEditCategoryModal;

@@ -22,11 +22,10 @@ const Category = (props) => {
 
     useEffect(() => {
         dispatch(getCategories());
-      console.log("object", categories);
     }, [])
   
   const rankFormatter = (cell, row, rowIndex, formatExtraData) => {
-    console.log("INDEX", rowIndex);
+    // console.log("INDEX", rowIndex);
     return (
       < div
         style={{
@@ -34,12 +33,12 @@ const Category = (props) => {
           cursor: "pointer",
           lineHeight: "normal"
         }}>
-        <button onClick={() => { cellEdtit(cell, row, rowIndex, formatExtraData) }} >
+        <button style={{ border: 'none',backgroundColor:'transparent'}} onClick={() => { cellEdtit(cell, row, rowIndex, formatExtraData) }} >
         <i class="navi-icon flaticon2-edit" ></i>
         </button>
         
-        <button onClick={() => { cellDelete(cell, row, rowIndex, formatExtraData) }} >
-        <i class="navi-icon flaticon2-trash" ></i>
+        <button style={{ border: 'none',backgroundColor:'transparent'}} onClick={() => { cellDelete(cell, row, rowIndex, formatExtraData) }} >
+        <i class="navi-icon flaticon2-trash text-danger" ></i>
         </button>
       </div>
     );
@@ -54,7 +53,7 @@ const Category = (props) => {
 
     useEffect(() => {
         // dispatch(getCategories());
-        console.log("object", categories)
+        // console.log("object", categories)
     }, [categories]);
 
   const columns = [{
@@ -80,7 +79,7 @@ const Category = (props) => {
     ];
 
   const cellEdtit = (cell, row, rowIndex, formatExtraData) => {
-    console.log("cell, row, rowIndex, formatExtraData", { cell, row, rowIndex, formatExtraData });
+    // console.log("cell, row, rowIndex, formatExtraData", { cell, row, rowIndex, formatExtraData });
     setmodal(true); setedit(true); setselectedCat(row);
   }
           
@@ -92,7 +91,7 @@ const Category = (props) => {
             type="button"
             className="btn btn-primary"
             //   onClick={productsUIProps.newProductButtonClick}
-            onClick={() => { setmodal(true); setedit(false); setselectedCat({}) }}
+            onClick={() => { setmodal(true); setedit(false); setselectedCat({category:'',description:''}) }}
           >
             New Category
             </button>
